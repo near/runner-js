@@ -33,7 +33,7 @@ const os = __importStar(require("os"));
 const path = __importStar(require("path"));
 const nearAPI = __importStar(require("near-api-js"));
 const js_sha256_1 = __importDefault(require("js-sha256"));
-const bs58_1 = __importDefault(require("bs58"));
+const base_1 = require("@scure/base");
 const near_units_1 = require("near-units");
 exports.ONE_NEAR = near_units_1.NEAR.parse('1N');
 function toYocto(amount) {
@@ -124,7 +124,7 @@ exports.urlConfigFromNetwork = urlConfigFromNetwork;
 function hashContract(contract) {
     const bytes = typeof contract === 'string' ? buffer_1.Buffer.from(contract, 'base64') : contract;
     const buffer = buffer_1.Buffer.from(js_sha256_1.default.sha256(bytes), 'hex');
-    return bs58_1.default.encode(buffer);
+    return base_1.base58.encode(Uint8Array.from(buffer));
 }
 exports.hashContract = hashContract;
 exports.EMPTY_CONTRACT_HASH = '11111111111111111111111111111111';

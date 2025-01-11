@@ -4,7 +4,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as nearAPI from 'near-api-js';
 import sha256 from 'js-sha256';
-import bs58 from 'bs58';
+import {base58} from '@scure/base';
 import {Gas, NEAR} from 'near-units';
 import {NamedAccount, KeyPair, ClientConfig, KeyStore, BN} from './types';
 
@@ -105,7 +105,7 @@ export function urlConfigFromNetwork(network: string | {network: string; rpcAddr
 export function hashContract(contract: string | Buffer): string {
   const bytes = typeof contract === 'string' ? Buffer.from(contract, 'base64') : contract;
   const buffer = Buffer.from(sha256.sha256(bytes), 'hex');
-  return bs58.encode(buffer);
+  return base58.encode(Uint8Array.from(buffer));
 }
 
 export const EMPTY_CONTRACT_HASH = '11111111111111111111111111111111';

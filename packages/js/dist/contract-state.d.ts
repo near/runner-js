@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import { Buffer } from 'buffer';
+import { Schema } from 'borsh';
 export declare class ContractState {
     private readonly data;
     constructor(dataArray: Array<{
@@ -7,9 +8,6 @@ export declare class ContractState {
         value: Buffer;
     }>);
     getRaw(key: string): Buffer;
-    get(key: string, borshSchema?: {
-        type: any;
-        schema: any;
-    }): any;
+    get(key: string, borshSchema: Schema): any;
 }
 //# sourceMappingURL=contract-state.d.ts.map
