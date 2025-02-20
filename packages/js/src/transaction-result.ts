@@ -1,17 +1,17 @@
 import {Buffer} from 'buffer';
 import {Gas} from 'near-units';
 import {
-  Action,
-  ClientConfig,
-  ExecutionError,
-  ExecutionOutcome,
-  ExecutionOutcomeWithId,
-  ExecutionStatus,
-  ExecutionStatusBasic,
-  FinalExecutionOutcome,
-  FinalExecutionStatus,
-  FinalExecutionStatusBasic,
-  PublicKey,
+  type Action,
+  type ClientConfig,
+  type ExecutionError,
+  type ExecutionOutcome,
+  type ExecutionOutcomeWithId,
+  type ExecutionStatus,
+  type ExecutionStatusBasic,
+  type FinalExecutionOutcome,
+  type FinalExecutionStatus,
+  type FinalExecutionStatusBasic,
+  type PublicKey,
 } from './types';
 
 function includes(pattern: string | RegExp): (s: string) => boolean {
@@ -221,8 +221,8 @@ export class TransactionResult {
   }
 
   get gas_burnt(): Gas {
-    const receipts_gas = this.receipts_outcomes.reduce((acc, cur) => acc + cur.outcome.gas_burnt, 0);
-    return Gas.from(this.result.transaction_outcome.outcome.gas_burnt + receipts_gas);
+    const receiptsGas = this.receipts_outcomes.reduce((accamulator, current) => accamulator + current.outcome.gas_burnt, 0);
+    return Gas.from(this.result.transaction_outcome.outcome.gas_burnt + receiptsGas);
   }
 
   receiptFailureMessagesContain(pattern: string | RegExp): boolean {

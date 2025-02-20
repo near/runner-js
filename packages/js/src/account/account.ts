@@ -1,30 +1,36 @@
-import {URL} from 'url';
+import {type URL} from 'url';
 import {Buffer} from 'buffer';
 import {env} from 'process';
-import BN from 'bn.js';
-import {NEAR} from 'near-units';
+import type BN from 'bn.js';
+import {type NEAR} from 'near-units';
 import * as borsh from 'borsh';
 import {
   DEFAULT_FUNCTION_CALL_GAS,
-  KeyPair,
-  PublicKey,
-  CodeResult,
-  AccountBalance,
-  Args,
-  AccountView,
-  Empty,
-  StateItem,
-  AccessKeyView,
-  AccessKeyList,
+  type KeyPair,
+  type PublicKey,
+  type CodeResult,
+  type AccountBalance,
+  type Args,
+  type AccountView,
+  type Empty,
+  type StateItem,
+  type AccessKeyView,
+  type AccessKeyList,
 } from '../types';
-import {Transaction} from '../transaction';
+import {type Transaction} from '../transaction';
 import {ContractState} from '../contract-state';
 import {JsonRpcProvider} from '../jsonrpc';
 import {EMPTY_CONTRACT_HASH, NO_DEPOSIT, randomAccountId} from '../utils';
-import {TransactionResult, TransactionError} from '../transaction-result';
-import {AccessKeyData, AccountBuilder, AccountData, RecordBuilder, Records} from '../record';
-import {NearAccount} from './near-account';
-import {NearAccountManager} from './near-account-manager';
+import {type TransactionResult, TransactionError} from '../transaction-result';
+import {
+  type AccessKeyData,
+  type AccountBuilder,
+  type AccountData,
+  RecordBuilder,
+  type Records,
+} from '../record';
+import {type NearAccount} from './near-account';
+import {type NearAccountManager} from './near-account-manager';
 
 export class Account implements NearAccount {
   constructor(
@@ -65,7 +71,8 @@ export class Account implements NearAccount {
   }
 
   async setKey(keyPair?: KeyPair): Promise<PublicKey> {
-    return (await this.manager.setKey(this.accountId, keyPair)).getPublicKey();
+    const keyPairResult = await this.manager.setKey(this.accountId, keyPair);
+    return keyPairResult.getPublicKey();
   }
 
   async createAccount(
@@ -127,7 +134,7 @@ export class Account implements NearAccount {
     initialBalance?: string;
     blockId?: number | string;
   }): Promise<NearAccount> {
-    if ((testnetContract && mainnetContract) || !(testnetContract || mainnetContract)) {
+    if ((testnetContract && mainnetContract) ?? !(testnetContract ?? mainnetContract)) {
       throw new TypeError('Provide `mainnetContract` or `testnetContract` but not both.');
     }
 
@@ -292,8 +299,8 @@ export class Account implements NearAccount {
     });
 
     if (!env.NEAR_WORKSPACES_NO_LOGS && txResult.logs.length > 0) {
-      const accId = typeof contractId === 'string' ? contractId : contractId.accountId;
-      console.log(`Contract logs from ${accId}.${methodName}(${JSON.stringify(args)}) call:`, txResult.logs);
+      const accountId = typeof contractId === 'string' ? contractId : contractId.accountId;
+      console.log(`Contract logs from ${accountId}.${methodName}(${JSON.stringify(args)}) call:`, txResult.logs);
     }
 
     if (txResult.failed) {
@@ -353,6 +360,7 @@ export class Account implements NearAccount {
   }
 
   async patchState(key: string, value_: any, borshSchema?: any): Promise<Empty> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.updateData(Buffer.from(key), Buffer.from(borshSchema ? borsh.serialize(borshSchema, value_) : value_));
   }
 
@@ -401,9 +409,9 @@ export class Account implements NearAccount {
   }
 
   async updateData(key: string | Buffer, value: string | Buffer): Promise<Empty> {
-    const key_string = key instanceof Buffer ? key.toString('base64') : key;
-    const value_string = value instanceof Buffer ? value.toString('base64') : value;
-    return this.patchStateRecords(this.recordBuilder().data(key_string, value_string));
+    const keyString = key instanceof Buffer ? key.toString('base64') : key;
+    const valueString = value instanceof Buffer ? value.toString('base64') : value;
+    return this.patchStateRecords(this.recordBuilder().data(keyString, valueString));
   }
 
   async transfer(accountId: string | NearAccount, amount: string | BN): Promise<TransactionResult> {
@@ -419,7 +427,8 @@ export class Account implements NearAccount {
     }: {keyPair?: KeyPair; initialBalance?: string | BN; isSubAccount?: boolean} = {},
   ): Promise<Transaction> {
     const newAccountId = isSubAccount ? this.makeSubAccount(accountId) : accountId;
-    const pubKey = (await this.getOrCreateKey(newAccountId, keyPair)).getPublicKey();
+    const keyPairResult = await this.getOrCreateKey(newAccountId, keyPair);
+    const pubKey = keyPairResult.getPublicKey();
     const amount = (initialBalance ?? this.manager.initialBalance).toString();
     return this.batch(newAccountId)
       .createAccount()

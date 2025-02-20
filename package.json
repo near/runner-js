@@ -22,51 +22,21 @@
     "docs:generate": "typedoc"
   },
   "devDependencies": {
-    "@ava/typescript": "^2.0.0",
+    "@ava/typescript": "^5.0.0",
     "@types/bn.js": "^5.1.0",
     "@types/fs-extra": "^9.0.12",
     "@types/node": "20.0.0",
     "@types/rimraf": "^3.0.1",
-    "ava": "^4.0.1",
+    "ava": "^6.2.0",
     "husky": "^7.0.1",
     "ts-node": "^10.9.1",
     "typedoc": "^0.24",
-    "typescript": "^4.7.4",
-    "xo": "^0.44.0"
+    "typescript": "5.4.5",
+    "xo": "^0.60.0"
   },
   "engines": {
     "node": ">=20.15.0",
     "pnpm": ">= 9.15"
-  },
-  "xo": {
-    "space": true,
-    "rules": {
-      "unicorn/prefer-node-protocol": 0,
-      "unicorn/prefer-module": 0,
-      "unicorn/no-array-callback-reference": 0,
-      "node/prefer-global/url": 0,
-      "ava/no-ignored-test-files": 0,
-      "@typescript-eslint/no-unsafe-return": 0
-    },
-    "ignores": [
-      "examples/**/*.js"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "**/__tests__/**/*.spec.ts",
-          "**/__tests__/**/*.ava.ts"
-        ],
-        "rules": {
-          "@typescript-eslint/no-unsafe-assignment": 0,
-          "unicorn/prefer-module": 0,
-          "@typescript-eslint/no-unsafe-call": 0,
-          "@typescript-eslint/no-empty-function": 0,
-          "import/no-extraneous-dependencies": 0,
-          "import/extensions": 0
-        }
-      }
-    ]
   },
   "private": true
 }

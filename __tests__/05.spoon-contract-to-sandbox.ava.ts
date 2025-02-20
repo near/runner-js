@@ -18,8 +18,14 @@
  * contracts can give you a huge confidence boost that your contracts will work
  * as expected once actually deployed.
  */
-import anyTest, {TestFn} from 'ava';
-import {Gas, NEAR, NearAccount, Worker, captureError} from '../packages/js';
+import anyTest, {type TestFn} from 'ava';
+import {
+  Gas,
+  NEAR,
+  type NearAccount,
+  Worker,
+  captureError,
+} from '../packages/js';
 
 const REF_FINANCE_ACCOUNT = 'v2.ref-finance.near';
 
@@ -37,7 +43,7 @@ test.beforeEach(async t => {
 });
 
 test.afterEach.always(async t => {
-  await t.context.worker.tearDown().catch(error => {
+  await t.context.worker.tearDown().catch((error: unknown) => {
     console.log('Failed to tear down the worker:', error);
   });
 });
@@ -130,13 +136,15 @@ test('integrate own FT with Ref.Finance', async t => {
     token_out: wNEAR,
   });
   t.is(expectedOut, '1662497915624478906119726');
-  const amountOut: string = await root.call(refFinance, 'swap', {actions: [{
-    pool_id,
-    token_in: ft,
-    amount_in: NEAR.parse('1 N'),
-    token_out: wNEAR,
-    min_amount_out: '1',
-  }]}, {
+  const amountOut: string = await root.call(refFinance, 'swap', {
+    actions: [{
+      pool_id,
+      token_in: ft,
+      amount_in: NEAR.parse('1 N'),
+      token_out: wNEAR,
+      min_amount_out: '1',
+    }],
+  }, {
     attachedDeposit: '1',
   });
   t.is(amountOut, expectedOut);

@@ -1,12 +1,12 @@
-import {Buffer} from 'buffer';
+import {type Buffer} from 'buffer';
 import * as fs from 'fs/promises';
-import {URL} from 'url';
+import {type URL} from 'url';
 import {NEAR} from 'near-units';
-import {TransactionResult} from './transaction-result';
+import {type TransactionResult} from './transaction-result';
 import {
-  Action,
+  type Action,
   PublicKey,
-  AccessKey,
+  type AccessKey,
   fullAccessKey,
   addKey,
   createAccount,
@@ -18,8 +18,8 @@ import {
   transfer,
   BN,
   DEFAULT_FUNCTION_CALL_GAS,
-  KeyPair,
-  NamedAccount,
+  type KeyPair,
+  type NamedAccount,
 } from './types';
 import {findFile, isPathLike} from './internal-utils';
 import {NO_DEPOSIT, parseGas, parseNEAR} from './utils';

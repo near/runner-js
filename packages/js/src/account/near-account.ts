@@ -1,13 +1,26 @@
-import {URL} from 'url';
-import {Buffer} from 'buffer';
-import BN from 'bn.js';
-import {NEAR} from 'near-units';
-import {KeyPair} from 'near-api-js';
-import {AccountBalance, PublicKey, CodeResult, AccountView, Empty, StateItem, AccessKeyList, AccessKeyView} from '../types';
-import {ContractState} from '../contract-state';
-import {Transaction} from '../transaction';
-import {TransactionResult} from '../transaction-result';
-import {AccessKeyData, AccountData, Records} from '../record';
+import {type URL} from 'url';
+import {type Buffer} from 'buffer';
+import type BN from 'bn.js';
+import {type NEAR} from 'near-units';
+import {type KeyPair} from 'near-api-js';
+import {
+  type AccountBalance,
+  type PublicKey,
+  type CodeResult,
+  type AccountView,
+  type Empty,
+  type StateItem,
+  type AccessKeyList,
+  type AccessKeyView,
+} from '../types';
+import {type ContractState} from '../contract-state';
+import {type Transaction} from '../transaction';
+import {type TransactionResult} from '../transaction-result';
+import {
+  type AccessKeyData,
+  type AccountData,
+  type Records,
+} from '../record';
 
 export interface NearAccount {
   /** Full account id for given account. */

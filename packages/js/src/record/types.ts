@@ -1,4 +1,4 @@
-import {FunctionCallPermissionView} from '../types';
+import {type FunctionCallPermissionView} from '../types';
 
 export interface KeyData {
   public_key: string; // "ed25519:546XB2oHhj7PzUKHiH9Xve3Ze5q1JiW2WTh6abXFED3c",

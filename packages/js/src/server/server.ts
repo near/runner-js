@@ -1,4 +1,4 @@
-import {ChildProcess} from 'child_process';
+import {type ChildProcess} from 'child_process';
 import {Buffer} from 'buffer';
 import process from 'process';
 import {open} from 'fs/promises';
@@ -13,10 +13,10 @@ import {
   exists,
   rm,
   spawn,
-  copyDir,
+  copyDirection,
   ensureBinary,
 } from '../internal-utils';
-import {Config, ChildProcessPromise} from '../types';
+import {type Config, type ChildProcessPromise} from '../types';
 
 const pollData = JSON.stringify({
   jsonrpc: '2.0',
@@ -75,18 +75,6 @@ function initialPort(): number {
 }
 
 export class SandboxServer {
-  private static lastPort: number = initialPort();
-  private static binPath: string;
-
-  private subprocess!: ChildProcess;
-  private readyToDie = false;
-  private readonly config: Config;
-
-  private constructor(config: Config) {
-    debug('Lifecycle.SandboxServer.constructor', 'config:', config);
-    this.config = config;
-  }
-
   static async nextPort(): Promise<number> {
     this.lastPort = await portCheck.nextAvailable(this.lastPort + Math.max(1, Math.floor(Math.random() * 4)), '0.0.0.0');
     return this.lastPort;
@@ -106,7 +94,7 @@ export class SandboxServer {
     const server = new SandboxServer(config);
     if (server.config.refDir) {
       await rm(server.homeDir);
-      await copyDir(server.config.refDir, server.config.homeDir);
+      await copyDirection(server.config.refDir, server.config.homeDir);
     }
 
     if ((await exists(server.homeDir))) {
@@ -120,6 +108,18 @@ export class SandboxServer {
     }
 
     return server;
+  }
+
+  private static lastPort: number = initialPort();
+  private static binPath: string;
+
+  private subprocess!: ChildProcess;
+  private readyToDie = false;
+  private readonly config: Config;
+
+  private constructor(config: Config) {
+    debug('Lifecycle.SandboxServer.constructor', 'config:', config);
+    this.config = config;
   }
 
   get homeDir(): string {

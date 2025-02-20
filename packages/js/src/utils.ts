@@ -6,7 +6,13 @@ import * as nearAPI from 'near-api-js';
 import sha256 from 'js-sha256';
 import bs58 from 'bs58';
 import {Gas, NEAR} from 'near-units';
-import {NamedAccount, KeyPair, ClientConfig, KeyStore, BN} from './types';
+import {
+  type NamedAccount,
+  type KeyPair,
+  type ClientConfig,
+  type KeyStore,
+  type BN,
+} from './types';
 
 export const ONE_NEAR = NEAR.parse('1N');
 
@@ -40,9 +46,9 @@ export function asId(id: string | NamedAccount): string {
 
 export const NO_DEPOSIT = NEAR.from(0);
 
-export async function captureError(fn: () => Promise<any>): Promise<string> {
+export async function captureError(function_: () => Promise<any>): Promise<string> {
   try {
-    await fn();
+    await function_();
   } catch (error: unknown) {
     if (error instanceof Error) {
       return error.message;
@@ -78,22 +84,28 @@ export function urlConfigFromNetwork(network: string | {network: string; rpcAddr
   const networkName = typeof network === 'string' ? network : network.network;
   const rpcAddr = typeof network === 'string' ? undefined : network.rpcAddr;
   switch (networkName) {
-    case 'sandbox':
+    case 'sandbox': {
       return {
         network: 'sandbox',
         rpcAddr: 'http://127.0.0.1',
       };
+    }
 
-    case 'custom':
+    case 'custom': {
       return {
         network: 'custom',
         rpcAddr: rpcAddr!,
       };
+    }
 
     case 'testnet':
-    case 'mainnet': return configFromDomain(networkName);
-    default:
+    case 'mainnet': {
+      return configFromDomain(networkName);
+    }
+
+    default: {
       throw new Error(`Got network ${networkName}, but only accept 'sandbox', 'testnet', 'mainnet' and 'custom'`);
+    }
   }
 }
 
@@ -119,15 +131,20 @@ export function getNetworkFromEnv(): 'sandbox' | 'testnet' | 'custom' {
   switch (network) {
     case 'sandbox':
     case 'testnet':
-    case 'custom':
+    case 'custom': {
       return network;
-    case undefined:
+    }
+
+    case undefined: {
       return 'sandbox';
-    default:
+    }
+
+    default: {
       throw new Error(
         `environment variable NEAR_WORKSPACES_NETWORK=${network} invalid; `
         + 'use \'testnet\', \'custom\', or \'sandbox\' (the default)',
       );
+    }
   }
 }
 

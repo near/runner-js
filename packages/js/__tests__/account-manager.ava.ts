@@ -1,9 +1,9 @@
-import anyTest, {TestFn} from 'ava';
+import anyTest, {type TestFn} from 'ava';
 import {
   AccountManager,
   TestnetWorker,
-  Worker,
-  TestnetManager,
+  type Worker,
+  type TestnetManager,
   getNetworkFromEnv,
 } from '..';
 

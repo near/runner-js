@@ -1,10 +1,10 @@
-import {KeyPair} from 'near-api-js';
-import {NEAR} from 'near-units';
-import {TransactionResult} from '../transaction-result';
-import {JsonRpcProvider} from '../jsonrpc';
-import {Transaction} from '../transaction';
-import {Config, AccountBalance, AccountView} from '../types';
-import {NearAccount} from './near-account';
+import {type KeyPair} from 'near-api-js';
+import {type NEAR} from 'near-units';
+import {type TransactionResult} from '../transaction-result';
+import {type JsonRpcProvider} from '../jsonrpc';
+import {type Transaction} from '../transaction';
+import {type Config, type AccountBalance, type AccountView} from '../types';
+import {type NearAccount} from './near-account';
 
 export interface NearAccountManager {
   readonly provider: JsonRpcProvider;

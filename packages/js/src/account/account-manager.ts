@@ -3,37 +3,56 @@ import * as process from 'process';
 import * as nearAPI from 'near-api-js';
 import {NEAR} from 'near-units';
 import {asId, isTopLevelAccount, randomAccountId} from '../utils';
-import {Config, KeyPair, BN, KeyPairEd25519, FinalExecutionOutcome, KeyStore, AccountBalance, NamedAccount, PublicKey, AccountView} from '../types';
+import {
+  type Config,
+  type KeyPair,
+  BN,
+  KeyPairEd25519,
+  type FinalExecutionOutcome,
+  type KeyStore,
+  type AccountBalance,
+  type NamedAccount,
+  type PublicKey,
+  type AccountView,
+} from '../types';
 import {debug, txDebug} from '../internal-utils';
 import {Transaction} from '../transaction';
 import {JsonRpcProvider} from '../jsonrpc';
 import {TransactionResult} from '../transaction-result';
 import {Account} from './account';
-import {NearAccount} from './near-account';
+import {type NearAccount} from './near-account';
 import {getKeyFromFile} from './utils';
-import {NearAccountManager} from './near-account-manager';
+import {type NearAccountManager} from './near-account-manager';
 
 export abstract class AccountManager implements NearAccountManager {
-  accountsCreated: Set<string> = new Set();
-  private _root?: NearAccount;
-  constructor(
-    protected config: Config,
-  ) {}
-
   static create(
     config: Config,
   ): AccountManager {
     const {network} = config;
     switch (network) {
-      case 'sandbox':
+      case 'sandbox': {
         return new SandboxManager(config);
-      case 'testnet':
+      }
+
+      case 'testnet': {
         return new TestnetManager(config);
-      case 'custom':
+      }
+
+      case 'custom': {
         return new CustomnetManager(config);
-      default: throw new Error(`Bad network id: "${network as string}"; expected "testnet", "custom" or "sandbox"`);
+      }
+
+      default: {
+        throw new Error(`Bad network id: "${network as string}"; expected "testnet", "custom" or "sandbox"`);
+      }
     }
   }
+
+  accountsCreated: Set<string> = new Set<string>();
+  private _root?: NearAccount;
+  constructor(
+    protected config: Config,
+  ) {}
 
   async accountView(accountId: string): Promise<AccountView> {
     return this.provider.viewAccount(accountId);
@@ -68,9 +87,7 @@ export abstract class AccountManager implements NearAccountManager {
   }
 
   get root(): NearAccount {
-    if (!this._root) {
-      this._root = new Account(this.rootAccountId, this);
-    }
+    this._root ||= new Account(this.rootAccountId, this);
 
     return this._root;
   }
@@ -96,7 +113,8 @@ export abstract class AccountManager implements NearAccountManager {
   }
 
   async getPublicKey(accountId: string): Promise<PublicKey | null> {
-    return (await this.getKey(accountId))?.getPublicKey() ?? null;
+    const keyPair = await this.getKey(accountId);
+    return keyPair?.getPublicKey() ?? null;
   }
 
   /** Sets the provided key to store, otherwise creates a new one */
@@ -138,7 +156,8 @@ export abstract class AccountManager implements NearAccountManager {
   }
 
   async availableBalance(account: string | NearAccount): Promise<NEAR> {
-    return (await this.balance(account)).available;
+    const balance = await this.balance(account);
+    return balance.available;
   }
 
   async exists(accountId: string | NearAccount): Promise<boolean> {
@@ -277,9 +296,7 @@ export class TestnetManager extends AccountManager {
   }
 
   get root(): NearAccount {
-    if (!this._testnetRoot) {
-      this._testnetRoot = new Account(this.fullRootAccountId, this);
-    }
+    this._testnetRoot ||= new Account(this.fullRootAccountId, this);
 
     return this._testnetRoot;
   }
@@ -294,15 +311,13 @@ export class TestnetManager extends AccountManager {
 
   get urlAccountCreator(): nearAPI.accountCreator.UrlAccountCreator {
     return new nearAPI.accountCreator.UrlAccountCreator(
-      {} as any, // ignored
+      {} as nearAPI.Connection, // ignored
       this.config.helperUrl!,
     );
   }
 
   async init(): Promise<AccountManager> {
-    if (!this.rootAccountId) {
-      this.rootAccountId = randomAccountId('r-', 5, 5);
-    }
+    this.rootAccountId ||= randomAccountId('r-', 5, 5);
 
     if (!(await this.exists(this.fullRootAccountId))) {
       await this.getAccount(this.masterAccountId).createSubAccount(this.rootAccountId);

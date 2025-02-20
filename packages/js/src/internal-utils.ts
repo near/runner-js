@@ -1,17 +1,16 @@
 import process from 'process';
 import {dirname, join} from 'path';
-import {constants, PathLike} from 'fs';
+import {constants, type PathLike} from 'fs';
 import {access} from 'fs/promises';
 import * as fs from 'fs/promises';
 import {promisify} from 'util';
-import {spawn as _spawn} from 'child_process';
 import {URL} from 'url';
 import {spawn as _asyncSpawn} from 'promisify-child-process';
 import rimraf from 'rimraf';
-import {Binary} from 'near-sandbox';
+import {type Binary} from 'near-sandbox';
 import {getBinary} from 'near-sandbox/dist/getBinary';
 import fs_extra from 'fs-extra';
-import {ChildProcessPromise} from './types';
+import {type ChildProcessPromise} from './types';
 
 export const rm = promisify(rimraf);
 export const sandboxBinary: () => Promise<Binary> = async () => (getBinary());
@@ -34,9 +33,9 @@ export async function asyncSpawn(bin: string, ...args: string[]): ChildProcessPr
   return _asyncSpawn(bin, args, {encoding: 'utf8'});
 }
 
-export {_spawn as spawn};
+export {spawn} from 'child_process';
 
-export function debug(...args: any[]): void {
+export function debug(...args: unknown[]): void {
   if (process.env.NEAR_WORKSPACES_DEBUG) {
     console.error(...args);
   }
@@ -48,7 +47,7 @@ export function txDebug(tx: string): void {
   }
 }
 
-export const copyDir = promisify(fs_extra.copy);
+export const copyDirection = promisify(fs_extra.copy);
 
 export async function ensureBinary(): Promise<string> {
   const binary = await sandboxBinary();

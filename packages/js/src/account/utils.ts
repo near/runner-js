@@ -2,15 +2,15 @@ import * as fs from 'fs/promises';
 import {Buffer} from 'buffer';
 import sha256 from 'js-sha256';
 import base64url from 'base64url';
-import {CallSite} from 'callsites';
+import {type CallSite} from 'callsites';
 import {KeyPair, KeyPairEd25519} from '../types';
 
 export function findCallerFile(): [string, number] {
   const sites: CallSite[] = callsites();
   const files: CallSite[] = sites.filter(s => s.getFileName());
   // Need better way to find file
-  const i = files.length - 1;
-  return [files[i].getFileName()!, files[i].getLineNumber()!];
+  const index = files.length - 1;
+  return [files[index].getFileName()!, files[index].getLineNumber()!];
 }
 
 export function callsites(): CallSite[] {
@@ -36,7 +36,7 @@ export async function getKeyFromFile(filePath: string, create = true): Promise<K
     const keyFile = require(filePath) as KeyFile; // eslint-disable-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
     return KeyPair.fromString(
       // @ts-expect-error `x` does not exist on KeyFile
-      keyFile.secret_key ?? keyFile.private_key,
+      String(keyFile.secret_key ?? keyFile.private_key),
     );
   } catch (error: unknown) {
     if (!create) {

@@ -7,8 +7,8 @@
  * on testnet by using the `test:sandbox` and `test:testnet` scripts in
  * package.json.
  */
-import anyTest, {TestFn} from 'ava';
-import {Worker, NEAR, NearAccount} from '../packages/js';
+import anyTest, {type TestFn} from 'ava';
+import {Worker, NEAR, type NearAccount} from '../packages/js';
 
 const test = anyTest as TestFn<{
   worker: Worker;
@@ -34,7 +34,7 @@ test.beforeEach(async t => {
 
 test.afterEach.always(async t => {
   // Stop Sandbox server
-  await t.context.worker.tearDown().catch(error => {
+  await t.context.worker.tearDown().catch((error: unknown) => {
     console.log('Failed to tear down the worker:', error);
   });
 });

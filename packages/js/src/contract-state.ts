@@ -17,6 +17,7 @@ export class ContractState {
   get(key: string, borshSchema?: {type: any; schema: any}): any {
     const value = this.getRaw(key);
     if (borshSchema) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return borsh.deserialize(borshSchema.schema, borshSchema.type, value);
     }
 

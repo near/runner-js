@@ -1,5 +1,5 @@
-import anyTest, {TestFn} from 'ava';
-import {NearAccount, Worker, getNetworkFromEnv} from '../packages/js';
+import anyTest, {type TestFn} from 'ava';
+import {type NearAccount, Worker, getNetworkFromEnv} from '../packages/js';
 
 // The contract provided contains only one view call, returning the
 // block_timestamp and epoch_height of the current block as a tuple.
@@ -7,7 +7,7 @@ import {NearAccount, Worker, getNetworkFromEnv} from '../packages/js';
 const contract_wasm = '__tests__/build/debug/simple_contract.wasm';
 
 // Represents the timestamp and epoch_height result from the view call.
-type EnvData = [number, number];
+type EnvironmentData = [number, number];
 
 if (getNetworkFromEnv() === 'sandbox') {
   const test = anyTest as TestFn<{
@@ -25,15 +25,15 @@ if (getNetworkFromEnv() === 'sandbox') {
   });
 
   test.afterEach.always(async t => {
-    await t.context.worker.tearDown().catch(error => {
+    await t.context.worker.tearDown().catch((error: unknown) => {
       console.log('Failed to tear down the worker:', error);
     });
   });
 
   test('Fast Forward', async t => {
     const before = await t.context.contract.view('current_env_data');
-    const env_before = before as EnvData;
-    console.log(`Before: timestamp = ${env_before[0]}, epoch_height = ${env_before[1]}`);
+    const environmentBefore = before as EnvironmentData;
+    console.log(`Before: timestamp = ${environmentBefore[0]}, epoch_height = ${environmentBefore[1]}`);
 
     const forward_height = 10_000;
 
@@ -42,8 +42,8 @@ if (getNetworkFromEnv() === 'sandbox') {
     await t.context.worker.provider.fastForward(forward_height);
 
     const after = await t.context.contract.view('current_env_data');
-    const env_after = after as EnvData;
-    console.log(`After: timestamp = ${env_after[0]}, epoch_height = ${env_after[1]}`);
+    const environmentAfter = after as EnvironmentData;
+    console.log(`After: timestamp = ${environmentAfter[0]}, epoch_height = ${environmentAfter[1]}`);
 
     const block = await t.context.worker.provider.block({finality: 'final'});
 

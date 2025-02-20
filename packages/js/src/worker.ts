@@ -2,8 +2,8 @@ import fs from 'fs';
 import {NEAR} from 'near-units';
 import {lock} from 'proper-lockfile';
 import {getNetworkFromEnv, urlConfigFromNetwork} from './utils';
-import {Config, ClientConfig} from './types';
-import {AccountManager, NearAccount, NearAccountManager} from './account';
+import {type Config, type ClientConfig} from './types';
+import {AccountManager, type NearAccount, type NearAccountManager} from './account';
 import {JsonRpcProvider} from './jsonrpc';
 import {debug} from './internal-utils';
 import {SandboxServer} from './server/server';
@@ -14,16 +14,6 @@ const API_KEY_HEADER = 'x-api-key';
  * The main interface to near-workspaces. Create a new worker instance with {@link Worker.init}, then run code on it.
  */
 export abstract class Worker {
-  protected config: Config;
-
-  protected manager!: NearAccountManager;
-
-  constructor(config: Config) {
-    debug('Lifecycle.Worker.constructor', 'config:', config);
-    this.config = config;
-    this.manager = AccountManager.create(config);
-  }
-
   /**
    * Initialize a new worker.
    *
@@ -41,18 +31,35 @@ export abstract class Worker {
   static async init(config: Partial<Config> = {}): Promise<Worker> {
     debug('Lifecycle.Worker.init()', 'config:', config);
     switch (config.network ?? getNetworkFromEnv()) {
-      case 'testnet':
+      case 'testnet': {
         return TestnetWorker.init(config);
-      case 'sandbox':
+      }
+
+      case 'sandbox': {
         return SandboxWorker.init(config);
-      case 'custom':
+      }
+
+      case 'custom': {
         return CustomnetWorker.init(config);
-      default:
+      }
+
+      default: {
         throw new Error(
-          `config.network = '${config.network}' invalid; ` // eslint-disable-line @typescript-eslint/restrict-template-expressions
+          `config.network = '${config.network}' invalid; `
             + 'must be \'testnet\', \'sandbox\' or \'custom\' (the default). Soon \'mainnet\'',
         );
+      }
     }
+  }
+
+  protected config: Config;
+
+  protected manager!: NearAccountManager;
+
+  constructor(config: Config) {
+    debug('Lifecycle.Worker.constructor', 'config:', config);
+    this.config = config;
+    this.manager = AccountManager.create(config);
   }
 
   get rootAccount(): NearAccount {
@@ -67,8 +74,6 @@ export abstract class Worker {
 // Connect to a custom network.
 // Note: the burden of ensuring the methods that are able to be called are left up to the user.
 export class CustomnetWorker extends Worker {
-  private readonly clientConfig: ClientConfig = urlConfigFromNetwork({network: 'custom', rpcAddr: this.config.rpcAddr});
-
   static async init(config: Partial<Config>): Promise<CustomnetWorker> {
     debug('Lifecycle.CustomnetWorker.create()', 'config:', config);
     const fullConfig = {
@@ -91,13 +96,14 @@ export class CustomnetWorker extends Worker {
     return worker;
   }
 
+  private readonly clientConfig: ClientConfig = urlConfigFromNetwork({network: 'custom', rpcAddr: this.config.rpcAddr});
+
   get provider(): JsonRpcProvider {
     return JsonRpcProvider.from(this.clientConfig);
   }
 
   async tearDown(): Promise<void> {
     // We are not stopping any server here because it is an external network.
-    return Promise.resolve();
   }
 
   get defaultConfig(): Config {
@@ -133,7 +139,6 @@ export class TestnetWorker extends Worker {
 
   async tearDown(): Promise<void> {
     // We are not stoping any server here because we are using Testnet
-    return Promise.resolve();
   }
 
   static get defaultConfig(): Config {
@@ -152,8 +157,6 @@ export class TestnetWorker extends Worker {
 }
 
 export class SandboxWorker extends Worker {
-  private server!: SandboxServer;
-
   static async init(config: Partial<Config>): Promise<SandboxWorker> {
     debug('Lifecycle.SandboxWorker.create()', 'config:', config);
     const syncFilename = SandboxServer.lockfilePath('near-sandbox-worker-sync.txt');
@@ -203,6 +206,8 @@ export class SandboxWorker extends Worker {
       rpcAddr: `http://127.0.0.1:${port}`,
     };
   }
+
+  private server!: SandboxServer;
 
   get provider(): JsonRpcProvider {
     return JsonRpcProvider.from(this.rpcAddr);

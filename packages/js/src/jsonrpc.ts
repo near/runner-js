@@ -3,8 +3,26 @@ import {Buffer} from 'buffer';
 import process from 'process';
 import {NEAR} from 'near-units';
 import {stringifyJsonOrBytes} from 'near-api-js/lib/transaction';
-import {Records} from './record';
-import {JSONRpc, ContractCodeView, AccountView, NearProtocolConfig, AccountBalance, CodeResult, ViewStateResult, BlockId, Finality, StateItem, TESTNET_RPC_ADDR, Empty, MAINNET_RPC_ADDR, PublicKey, Network, AccessKeyView, AccessKeyList} from './types';
+import {type Records} from './record';
+import {
+  JSONRpc,
+  type ContractCodeView,
+  type AccountView,
+  type NearProtocolConfig,
+  type AccountBalance,
+  type CodeResult,
+  type ViewStateResult,
+  type BlockId,
+  type Finality,
+  type StateItem,
+  TESTNET_RPC_ADDR,
+  type Empty,
+  MAINNET_RPC_ADDR,
+  type PublicKey,
+  type Network,
+  type AccessKeyView,
+  type AccessKeyList,
+} from './types';
 
 const OPTIMISTIC: {finality: 'optimistic'} = {finality: 'optimistic'};
 /**
@@ -12,8 +30,6 @@ const OPTIMISTIC: {finality: 'optimistic'} = {finality: 'optimistic'};
  * interacting with an endpoint.
  */
 export class JsonRpcProvider extends JSONRpc {
-  private static readonly providers: Map<string, JsonRpcProvider> = new Map();
-
   /**
    * Create a JsonRpcProvider from config or rpcAddr
    * @param config rpc endpoint URL or a configuration that includes one.
@@ -30,11 +46,25 @@ export class JsonRpcProvider extends JSONRpc {
 
   static fromNetwork(network: Network): JsonRpcProvider {
     switch (network) {
-      case 'mainnet': return process.env.NEAR_CLI_MAINNET_RPC_SERVER_URL ? JsonRpcProvider.from(process.env.NEAR_CLI_MAINNET_RPC_SERVER_URL) : MainnetRpc;
-      case 'testnet': return process.env.NEAR_CLI_TESTNET_RPC_SERVER_URL ? JsonRpcProvider.from(process.env.NEAR_CLI_TESTNET_RPC_SERVER_URL) : TestnetRpc;
-      default: throw new TypeError('Invalid network only mainnet or testnet');
+      case 'mainnet': {
+        return process.env.NEAR_CLI_MAINNET_RPC_SERVER_URL
+          ? JsonRpcProvider.from(process.env.NEAR_CLI_MAINNET_RPC_SERVER_URL)
+          : MainnetRpc;
+      }
+
+      case 'testnet': {
+        return process.env.NEAR_CLI_TESTNET_RPC_SERVER_URL
+          ? JsonRpcProvider.from(process.env.NEAR_CLI_TESTNET_RPC_SERVER_URL)
+          : TestnetRpc;
+      }
+
+      default: {
+        throw new TypeError('Invalid network only mainnet or testnet');
+      }
     }
   }
+
+  private static readonly providers: Map<string, JsonRpcProvider> = new Map<string, JsonRpcProvider>();
 
   /**
    * Download the binary of a given contract.
@@ -51,12 +81,12 @@ export class JsonRpcProvider extends JSONRpc {
    * @returns Base64 string of Wasm binary
    */
   async viewCodeRaw(accountId: string, blockQuery: {block_id: BlockId} | {finality: Finality} = OPTIMISTIC): Promise<string> {
-    const {code_base64}: ContractCodeView = await this.query({
+    const {code_base64: codeBase64}: ContractCodeView = await this.query({
       request_type: 'view_code',
       account_id: accountId,
       ...blockQuery,
     });
-    return code_base64;
+    return codeBase64;
   }
 
   async viewAccount(accountId: string, blockQuery: {block_id: BlockId} | {finality: Finality} = OPTIMISTIC): Promise<AccountView> {
@@ -116,8 +146,8 @@ export class JsonRpcProvider extends JSONRpc {
   }
 
   async viewCall(accountId: string, methodName: string, args: Record<string, unknown> | Uint8Array, blockQuery?: {block_id: BlockId} | {finality: Finality}): Promise<CodeResult> {
-    const args_buffer = stringifyJsonOrBytes(args);
-    return this.viewCallRaw(accountId, methodName, args_buffer.toString('base64'), blockQuery);
+    const argsBuffer = stringifyJsonOrBytes(args);
+    return this.viewCallRaw(accountId, methodName, argsBuffer.toString('base64'), blockQuery);
   }
 
   /**
@@ -201,6 +231,7 @@ export class JsonRpcProvider extends JSONRpc {
     return this.sendJsonRpc('sandbox_fast_forward', {delta_height: deltaHeight});
   }
 }
-
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const TestnetRpc = JsonRpcProvider.from(TESTNET_RPC_ADDR);
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const MainnetRpc = JsonRpcProvider.from(MAINNET_RPC_ADDR);

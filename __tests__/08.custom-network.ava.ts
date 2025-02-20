@@ -1,5 +1,5 @@
 import process from 'process';
-import anyTest, {TestFn} from 'ava';
+import anyTest, {type TestFn} from 'ava';
 import {Worker, getNetworkFromEnv} from '../packages/js';
 
 // To run this test, you need to set the NEAR_RPC_API_KEY environment variable tied the Pagoda testnet network.
@@ -21,7 +21,7 @@ if (getNetworkFromEnv() === 'custom' && process.env.NEAR_RPC_API_KEY !== '') {
   });
 
   test.after.always(async t => {
-    await t.context.worker.tearDown().catch(error => {
+    await t.context.worker.tearDown().catch((error: unknown) => {
       console.log('Failed to tear down the worker:', error);
     });
   });

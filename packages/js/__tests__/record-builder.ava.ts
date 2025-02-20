@@ -1,7 +1,7 @@
 import path from 'path';
-import anyTest, {TestFn} from 'ava';
+import anyTest, {type TestFn} from 'ava';
 import {NEAR} from 'near-units';
-import {getNetworkFromEnv, NearAccount, Worker} from '..';
+import {getNetworkFromEnv, type NearAccount, Worker} from '..';
 import {RecordBuilder} from '../dist/record';
 
 const test = anyTest as TestFn<{
@@ -24,7 +24,7 @@ if (getNetworkFromEnv() === 'sandbox') {
   });
 
   test.afterEach.always(async t => {
-    await t.context.worker.tearDown().catch(error => {
+    await t.context.worker.tearDown().catch((error: unknown) => {
       console.log('Failed to tear down the worker:', error);
     });
   });

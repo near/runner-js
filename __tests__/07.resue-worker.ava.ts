@@ -5,8 +5,8 @@
  * Keep in mind that tests are executed in parallel.
  * It means that they should not depend on each other.
  */
-import anyTest, {TestFn} from 'ava';
-import {Worker, NEAR, NearAccount} from '../packages/js';
+import anyTest, {type TestFn} from 'ava';
+import {Worker, NEAR, type NearAccount} from '../packages/js';
 
 const test = anyTest as TestFn<{
   worker: Worker;
@@ -28,7 +28,7 @@ test.before(async t => {
 });
 
 test.after.always(async t => {
-  await t.context.worker.tearDown().catch(error => {
+  await t.context.worker.tearDown().catch((error: unknown) => {
     console.log('Failed to tear down the worker:', error);
   });
 });

@@ -1,14 +1,19 @@
-import {Buffer} from 'buffer';
-import {KeyPair, NamedAccount, PublicKey} from '../types';
+import {type Buffer} from 'buffer';
+import {type KeyPair, type NamedAccount, PublicKey} from '../types';
 import {hashContract} from '../utils';
-import {AccessKeyData, Account, AccountData, StateRecord} from './types';
+import {
+  type AccessKeyData,
+  type Account,
+  type AccountData,
+  type StateRecord,
+} from './types';
 
 export class RecordBuilder {
-  readonly records: StateRecord[] = [];
-
   static fromAccount(accountId: string | Account | NamedAccount): AccountBuilder {
     return new AccountBuilder(accountId);
   }
+
+  readonly records: StateRecord[] = [];
 
   push(record: StateRecord): this {
     this.records.push(record);
@@ -58,14 +63,14 @@ export class AccountBuilder extends RecordBuilder {
   }
 
   accessKey(key: string | PublicKey | KeyPair, access_key = DEFAULT_ACCESS_KEY_PERMISSION): this {
-    const public_key
+    const publicKey
       = typeof key === 'string' ? key
         : (key instanceof PublicKey ? key.toString()
           : key.getPublicKey().toString());
     return this.push({
       AccessKey: {
         account_id: this.account_id,
-        public_key,
+        public_key: publicKey,
         access_key,
       },
     });

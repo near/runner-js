@@ -11,10 +11,10 @@
  * testnet. That's why they're wrapped with `if (getNetworkFromEnv() === 'sandbox')`.
  */
 
-/* eslint-disable @typescript-eslint/no-extraneous-class, @typescript-eslint/no-unsafe-member-access */
-import anyTest, {TestFn} from 'ava';
+/* eslint-disable @typescript-eslint/no-extraneous-class, @typescript-eslint/no-unsafe-argument */
+import anyTest, {type TestFn} from 'ava';
 import * as borsh from '../packages/js/node_modules/borsh';
-import {Worker, getNetworkFromEnv, NearAccount} from '../packages/js';
+import {Worker, getNetworkFromEnv, type NearAccount} from '../packages/js';
 import {NEAR} from '../packages/js/node_modules/near-units';
 
 if (getNetworkFromEnv() === 'sandbox') {
@@ -34,7 +34,7 @@ if (getNetworkFromEnv() === 'sandbox') {
   });
 
   test.afterEach.always(async t => {
-    await t.context.worker.tearDown().catch(error => {
+    await t.context.worker.tearDown().catch((error: unknown) => {
       console.log('Failed to tear down the worker:', error);
     });
   });

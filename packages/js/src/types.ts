@@ -1,9 +1,9 @@
-import {ChildProcess} from 'child_process';
+import {type ChildProcess} from 'child_process';
 import _BN from 'bn.js';
-import {KeyPair} from 'near-api-js';
-import {Output} from 'promisify-child-process';
-import {NEAR} from 'near-units';
-import {KeyStore} from 'near-api-js/lib/key_stores';
+import {type KeyPair} from 'near-api-js';
+import {type Output} from 'promisify-child-process';
+import {type NEAR} from 'near-units';
+import {type KeyStore} from 'near-api-js/lib/key_stores';
 
 export {ServerError} from 'near-api-js/lib/utils/rpc_errors';
 export {KeyPair, Connection} from 'near-api-js';
